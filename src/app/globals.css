@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  /* Map custom font variables to Tailwind utilities */
+  --font-syne: var(--font-syne);
+  --font-sans: var(--font-inter); 
+  --font-inter: var(--font-inter);
+
+  --color-vanta: #050505;
+  --color-safety: #ff4500;
+  --color-spotlight: #ffffff;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #050505;
+}
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #ff4500;
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+    
+    .syne {
+        font-family: var(--font-syne);
+    }
+    
+    body {
+        font-family: var(--font-inter);
+    }
+    
+    .menu-item:hover {
+        -webkit-text-stroke: 1px #fff;
+    }
+}

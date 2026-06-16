@@ -11,8 +11,8 @@ import Link from "next/link";
 
 export default function Features() {
     const sectionRef = useRef<HTMLElement>(null);
-    const card1Ref = useRef<HTMLDivElement>(null);
-    const card2Ref = useRef<HTMLDivElement>(null);
+    const card1Ref = useRef<HTMLAnchorElement>(null);
+    const card2Ref = useRef<HTMLAnchorElement>(null);
 
     useLayoutEffect(() => {
         let ctx = gsap.context(() => {

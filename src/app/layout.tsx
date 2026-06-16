@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Syne } from "next/font/google";
 import "./globals.css";
+import { NavigationProvider } from "@/context/NavigationContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${syne.variable} antialiased bg-[#050505] text-white`}
       >
-        {children}
+        <NavigationProvider>
+          {children}
+        </NavigationProvider>
       </body>
     </html>
   );

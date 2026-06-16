@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Link from "next/link";
 import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -39,36 +40,39 @@ export default function SearchByType() {
     const titleRef = useRef<HTMLHeadingElement>(null);
     const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-    useEffect(() => {
-        const el = sectionRef.current;
-        if (!el) return;
+    useLayoutEffect(() => {
+        let ctx = gsap.context(() => {
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: sectionRef.current,
+                    start: "top 80%",
+                    once: true,
+                }
+            });
 
-        // 1. Title & Subtitle Fade Up
-        gsap.from(titleRef.current, {
-            scrollTrigger: {
-                trigger: el,
-                start: "top 85%",
-                toggleActions: "play none none reverse",
-            },
-            y: 30,
-            opacity: 0,
-            duration: 1.2,
-            ease: "power2.out",
-        });
+            tl.fromTo(titleRef.current,
+                { y: 30, opacity: 0 },
+                {
+                    y: 0,
+                    opacity: 1,
+                    duration: 0.8,
+                    ease: "power2.out",
+                }
+            )
+                .fromTo(".search-card",
+                    { y: 40, opacity: 0 },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 0.8,
+                        stagger: 0.1,
+                        ease: "power2.out",
+                        clearProps: "all"
+                    }, "-=0.4");
 
-        // 2. Cards Staggered Entrance
-        gsap.from(cardsRef.current, {
-            scrollTrigger: {
-                trigger: el,
-                start: "top 80%",
-                toggleActions: "play none none reverse",
-            },
-            y: 40,
-            opacity: 0,
-            duration: 1.2,
-            stagger: 0.1,
-            ease: "power2.out",
-        });
+        }, sectionRef); // Scope to section
+
+        return () => ctx.revert();
     }, []);
 
     return (
@@ -91,12 +95,10 @@ export default function SearchByType() {
                 {/* Grid Layout */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     {carTypes.map((car, index) => (
-                        <div
+                        <Link
                             key={car.name}
-                            ref={(el) => {
-                                if (el) cardsRef.current[index] = el;
-                            }}
-                            className="group cursor-pointer relative overflow-hidden rounded-xl aspect-[16/9]"
+                            href={`/collection?type=${encodeURIComponent(car.name)}`}
+                            className="search-card group cursor-pointer relative overflow-hidden rounded-xl aspect-[16/9] block"
                         >
                             {/* Background Image */}
                             <div
@@ -116,7 +118,7 @@ export default function SearchByType() {
                                     →
                                 </span>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>

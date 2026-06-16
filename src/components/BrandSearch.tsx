@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
+import Link from "next/link";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -37,37 +38,42 @@ export default function BrandSearch() {
     const gridRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const el = sectionRef.current;
-        if (!el) return;
+        let ctx = gsap.context(() => {
+            if (!sectionRef.current) return;
 
-        // 1. Title Fade Up
-        gsap.from(titleRef.current, {
-            scrollTrigger: {
-                trigger: el,
-                start: "top 85%",
-                toggleActions: "play none none reverse",
-            },
-            y: 30,
-            opacity: 0,
-            duration: 1,
-            ease: "power2.out",
-        });
-
-        // 2. Logos Staggered Entrance
-        if (gridRef.current) {
-            gsap.from(gridRef.current.children, {
+            const tl = gsap.timeline({
                 scrollTrigger: {
-                    trigger: el,
+                    trigger: sectionRef.current,
                     start: "top 75%",
-                    toggleActions: "play none none reverse",
-                },
-                y: 30,
-                opacity: 0,
-                duration: 0.8,
-                stagger: 0.05,
-                ease: "power2.out",
+                    once: true,
+                }
             });
-        }
+
+            // 1. Title Fade Up
+            tl.fromTo(titleRef.current,
+                { y: 30, opacity: 0 },
+                {
+                    y: 0,
+                    opacity: 1,
+                    duration: 1,
+                    ease: "power2.out",
+                }
+            )
+                // 2. Logos Staggered Entrance
+                .fromTo(".brand-item",
+                    { y: 30, opacity: 0 },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 0.8,
+                        stagger: 0.03,
+                        ease: "power2.out",
+                        clearProps: "all"
+                    }, "-=0.5");
+
+        }, sectionRef);
+
+        return () => ctx.revert();
     }, []);
 
     return (
@@ -86,8 +92,9 @@ export default function BrandSearch() {
                 {/* Brand Grid */}
                 <div ref={gridRef} className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-y-12 gap-x-8 md:gap-x-12 items-start justify-items-center">
                     {brands.map((brand) => (
-                        <div
+                        <Link
                             key={brand.name}
+                            href={`/collection?brand=${encodeURIComponent(brand.name)}`}
                             className="brand-item group cursor-pointer flex flex-col items-center gap-3"
                         >
                             <div className="w-16 md:w-20 h-16 flex items-center justify-center">
@@ -102,7 +109,7 @@ export default function BrandSearch() {
                             <p className="syne text-xs font-semibold text-gray-500 uppercase tracking-widest group-hover:text-black transition-colors duration-300">
                                 {brand.name}
                             </p>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>

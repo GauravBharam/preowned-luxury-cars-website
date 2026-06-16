@@ -39,3 +39,21 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# agents & system config
+.agent/
+
+# temporary test scripts & screenshots
+check_console.js
+check_glb.mjs
+final_test.js
+screenshot_test.js
+scroll_test.js
+final_stage0.png
+final_stage1.png
+final_stage2.png
+final_stage3.png
+shot1.png
+shot2.png
+shot3.png
+porsche.webp

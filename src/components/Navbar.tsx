@@ -53,9 +53,11 @@ export default function Navbar() {
                 </Link>
 
                 {/* 3. Contact Button (Right) */}
-                <button className="syne text-[10px] sm:text-xs font-semibold tracking-widest uppercase text-white border border-white/40 hover:bg-white hover:text-black transition-all px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg hidden md:block">
-                    Contact
-                </button>
+                <Link href="/contact-us">
+                    <button className="syne text-[10px] sm:text-xs font-semibold tracking-widest uppercase text-white border border-white/40 hover:bg-white hover:text-black transition-all px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg hidden md:block">
+                        Contact
+                    </button>
+                </Link>
 
                 {/* Mobile Spacer */}
                 <div className="w-6 md:hidden"></div>
@@ -67,10 +69,10 @@ export default function Navbar() {
                 className={`fixed inset-0 bg-[#050505] z-40 flex flex-col justify-center items-center gap-4 transition-all duration-500 ease-in-out ${isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
                     }`}
             >
-                {["Home", "Collections", "Services", "About Us", "Contact"].map((item, index) => (
+                {["Home", "Collections", "Sell Your Car", "About Us", "Contact Us"].map((item, index) => (
                     <Link
                         key={item}
-                        href="#"
+                        href={item === "Home" ? "/" : item === "Collections" ? "/collection" : item === "Sell Your Car" ? "/sell-your-car" : item === "About Us" ? "/about-us" : item === "Contact Us" ? "/contact-us" : "#"}
                         ref={(el) => {
                             if (el) menuItemsRef.current[index] = el;
                         }}

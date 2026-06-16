@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
@@ -74,33 +74,39 @@ export default function NewArrivals() {
     const rowsRef = useRef<(HTMLDivElement | null)[]>([]);
 
     useEffect(() => {
-        const el = sectionRef.current;
-        if (!el) return;
+        let ctx = gsap.context(() => {
+            if (!sectionRef.current) return;
 
-        gsap.from(titleRef.current, {
-            scrollTrigger: {
-                trigger: el,
-                start: "top 85%",
-                toggleActions: "play none none reverse",
-            },
-            y: 30,
-            opacity: 0,
-            duration: 1,
-            ease: "power2.out",
-        });
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: sectionRef.current,
+                    start: "top 75%",
+                    once: true,
+                }
+            });
 
-        gsap.from(rowsRef.current, {
-            scrollTrigger: {
-                trigger: el,
-                start: "top 75%",
-                toggleActions: "play none none reverse",
-            },
-            y: 50,
-            opacity: 0,
-            duration: 1.2,
-            stagger: 0.2,
-            ease: "power2.out",
-        });
+            tl.fromTo(titleRef.current,
+                { y: 30, opacity: 0 },
+                {
+                    y: 0,
+                    opacity: 1,
+                    duration: 1,
+                    ease: "power2.out",
+                }
+            )
+                .fromTo(rowsRef.current,
+                    { y: 50, opacity: 0 },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 1.2,
+                        stagger: 0.2,
+                        ease: "power2.out",
+                        clearProps: "all"
+                    }, "-=0.5");
+        }, sectionRef);
+
+        return () => ctx.revert();
     }, []);
 
     // Split cars into rows of 2 for layout matching original HTML
@@ -109,9 +115,14 @@ export default function NewArrivals() {
     return (
         <section ref={sectionRef} id="new-arrivals" className="max-w-7xl mx-auto bg-black text-white relative z-20 py-20 px-6 md:px-12">
             <div className="w-full">
-                <h2 ref={titleRef} className="syne font-bold text-3xl md:text-5xl pb-10 text-center">
-                    New Arrivals
-                </h2>
+                <div ref={titleRef} className="mb-10 text-left md:text-center">
+                    <h2 className="syne font-bold text-3xl md:text-5xl mb-4 text-white">
+                        New Arrivals
+                    </h2>
+                    <p className="text-gray-600 text-lg md:text-xl">
+                        Luxurious Cars at Best Prices
+                    </p>
+                </div>
 
                 {rows.map((row, rowIndex) => (
                     <div

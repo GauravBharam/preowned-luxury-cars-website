@@ -1,6 +1,8 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useLayoutEffect, useEffect } from "react";
+import Link from "next/link";
+
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -12,38 +14,54 @@ export default function Hero() {
     const buttonRef = useRef<HTMLButtonElement>(null);
     const toggleBtnRef = useRef<HTMLButtonElement>(null);
 
-    useEffect(() => {
-        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    useLayoutEffect(() => {
+        let ctx = gsap.context(() => {
+            const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-        // Overlay Fade In
-        tl.fromTo(
-            ".hero-overlay",
-            { opacity: 0 },
-            { opacity: 1, duration: 1.5 }
-        )
-            // Headline Slide Up
-            .to(
-                headlineRef.current,
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: 1.2,
-                    ease: "power4.out",
-                },
-                "-=0.5"
+            // Overlay Fade In
+            tl.fromTo(
+                ".hero-overlay",
+                { opacity: 0 },
+                { opacity: 1, duration: 1.5 }
             )
-            // Button Slide Up
-            .to(
-                buttonRef.current,
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: 1.2,
-                    ease: "power4.out",
-                },
-                "-=0.5"
-            );
+                // Headline Slide Up
+                .to(
+                    headlineRef.current,
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 1.2,
+                        ease: "power4.out",
+                    },
+                    "-=0.5"
+                )
+                // Button Slide Up
+                .fromTo(
+                    buttonRef.current,
+                    {
+                        y: 30,
+                        opacity: 0
+                    },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 1.2,
+                        ease: "power3.out", // Smooth natural ease
+                        onComplete: () => {
+                            // Enable transitions for hover effects after animation
+                            if (buttonRef.current) {
+                                buttonRef.current.style.transition = "all 0.3s ease";
+                            }
+                        }
+                    },
+                    "-=0.8"
+                );
+        });
 
+        return () => ctx.revert();
+    }, []);
+
+    useEffect(() => {
         // Video Autoplay Handling
         if (videoRef.current) {
             videoRef.current.play().catch(error => {
@@ -91,12 +109,14 @@ export default function Hero() {
                     Get your Dream car at Deccan Wheels
                 </h1>
 
-                <button
-                    ref={buttonRef}
-                    className="discover-btn px-10 py-3 border border-white bg-transparent text-white font-semibold text-sm tracking-widest uppercase cursor-pointer transition-colors duration-300 hover:bg-white hover:text-black opacity-0 translate-y-8 backdrop-blur-sm rounded-lg"
-                >
-                    Discover More
-                </button>
+                <Link href="/collection">
+                    <button
+                        ref={buttonRef}
+                        className="discover-btn px-10 py-4 border border-white bg-transparent text-white font-bold text-sm tracking-widest uppercase cursor-pointer hover:bg-white hover:text-black hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] hover:-translate-y-1 backdrop-blur-sm rounded-lg opacity-0"
+                    >
+                        View Collection
+                    </button>
+                </Link>
             </div>
 
             {/* Video Control Button */}

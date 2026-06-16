@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -53,22 +53,28 @@ export default function WhyUs() {
     const sectionRef = useRef<HTMLElement>(null);
     const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-    useEffect(() => {
-        const el = sectionRef.current;
-        if (!el) return;
+    useLayoutEffect(() => {
+        let ctx = gsap.context(() => {
+            if (!sectionRef.current) return;
 
-        gsap.from(itemsRef.current, {
-            scrollTrigger: {
-                trigger: el,
-                start: "top 80%",
-                toggleActions: "play none none reverse",
-            },
-            y: 30,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.15,
-            ease: "power2.out",
-        });
+            gsap.fromTo(itemsRef.current,
+                { y: 30, opacity: 0 },
+                {
+                    scrollTrigger: {
+                        trigger: sectionRef.current,
+                        start: "top 80%",
+                        once: true,
+                    },
+                    y: 0,
+                    opacity: 1,
+                    duration: 0.8,
+                    stagger: 0.15,
+                    ease: "power2.out",
+                    clearProps: "all"
+                });
+        }, sectionRef);
+
+        return () => ctx.revert();
     }, []);
 
     return (

@@ -1,45 +1,53 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
+import Link from "next/link";
+
 export default function Features() {
     const sectionRef = useRef<HTMLElement>(null);
     const card1Ref = useRef<HTMLDivElement>(null);
     const card2Ref = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        const el = sectionRef.current;
-        if (!el) return;
+    useLayoutEffect(() => {
+        let ctx = gsap.context(() => {
+            if (!sectionRef.current) return;
 
-        const cards = [card1Ref.current, card2Ref.current];
+            const cards = [card1Ref.current, card2Ref.current];
 
-        gsap.from(cards, {
-            scrollTrigger: {
-                trigger: el,
-                start: "top 85%",
-                toggleActions: "play none none reverse",
-            },
-            y: 40,
-            opacity: 0,
-            duration: 1.2,
-            stagger: 0.1,
-            ease: "power2.out",
-        });
+            gsap.fromTo(cards,
+                { y: 40, opacity: 0 },
+                {
+                    scrollTrigger: {
+                        trigger: sectionRef.current,
+                        start: "top 85%",
+                        once: true,
+                    },
+                    y: 0,
+                    opacity: 1,
+                    duration: 1.2,
+                    stagger: 0.1,
+                    ease: "power2.out",
+                    clearProps: "all"
+                });
+        }, sectionRef);
+
+        return () => ctx.revert();
     }, []);
 
     return (
         <section ref={sectionRef} id="features-section" className="w-full grid grid-cols-1 md:grid-cols-2 h-[75vh] overflow-hidden bg-black text-white">
 
             {/* Card 1: Premium Selection */}
-            <div
+            <Link
+                href="/collection"
                 ref={card1Ref}
-                className="relative group h-full w-full overflow-hidden cursor-pointer"
-                onClick={() => window.location.href = '#'}
+                className="relative group h-full w-full overflow-hidden cursor-pointer block"
             >
                 <div className="absolute inset-0 w-full h-full">
                     <Image
@@ -65,7 +73,7 @@ export default function Features() {
                         Curated excellence. Every vehicle verifies our promise of absolute confidence and luxury.
                     </p>
                     <div className="mt-8 flex items-center gap-3 opacity-0 translate-y-4 transition-all duration-500 delay-200 group-hover:opacity-100 group-hover:translate-y-0">
-                        <span className="text-white text-sm uppercase tracking-widest font-semibold">Explore Inventory</span>
+                        <span className="text-white text-sm uppercase tracking-widest font-semibold group-hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition-all">Explore Collection</span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4 text-white">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                         </svg>
@@ -76,13 +84,13 @@ export default function Features() {
                 <span className="absolute top-8 right-8 text-6xl md:text-8xl font-bold text-white/5 syne pointer-events-none select-none z-0">
                     01
                 </span>
-            </div>
+            </Link>
 
             {/* Card 2: Certified Engineering */}
-            <div
+            <Link
+                href="/about-us"
                 ref={card2Ref}
-                className="relative group h-full w-full overflow-hidden cursor-pointer bg-neutral-900"
-                onClick={() => window.location.href = '#'}
+                className="relative group h-full w-full overflow-hidden cursor-pointer bg-neutral-900 block"
             >
                 <div className="absolute inset-0 w-full h-full">
                     <Image
@@ -108,7 +116,7 @@ export default function Features() {
                         Rigorous 151-point inspection. We ensure perfection in every mechanical component.
                     </p>
                     <div className="mt-8 flex items-center gap-3 opacity-0 translate-y-4 transition-all duration-500 delay-200 group-hover:opacity-100 group-hover:translate-y-0">
-                        <span className="text-white text-sm uppercase tracking-widest font-semibold">Learn Checkpoints</span>
+                        <span className="text-white text-sm uppercase tracking-widest font-semibold">Explore About Us</span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4 text-white">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                         </svg>
@@ -119,7 +127,7 @@ export default function Features() {
                 <span className="absolute top-8 right-8 text-6xl md:text-8xl font-bold text-white/5 syne pointer-events-none select-none z-0">
                     02
                 </span>
-            </div>
+            </Link>
 
         </section>
     );
